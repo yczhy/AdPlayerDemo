@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955169e4dc04542ec86a496b94f82f0a, type: 3}
   m_Name: AdConfig
   m_EditorClassIdentifier: Assembly-CSharp::Duskvern.AdConfig
+  enableTestAdMode: 0
+  interstitialReplaceReward: 0
+  rewardReplaceInterstitial: 0
   adPlatformParameters:
-  - adPlatform: 0
-    adParameters:
-    - adType: 0
-      adUnitId: 
-    - adType: 1
-      adUnitId: 
+  - adPlatform: 1
+    isEnableTestMode: 0
+    adParameters: []

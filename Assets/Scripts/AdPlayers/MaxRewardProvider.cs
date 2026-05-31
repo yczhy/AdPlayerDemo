@@ -1,14 +1,27 @@
+using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Duskvern
 {
-    public class MaxRewardAdProvider
+    public class MaxRewardAdProvider : AdProviderBase
     {
-        private string rewardAdUnitId = "你的Reward广告ID";
-
-        public void Init()
+        public override bool IsReady
         {
-            // 初始化 Reward 广告
+            get
+            {
+                bool isReady = MaxSdk.IsRewardedAdReady(adUnitId);
+                return isReady;
+            }
+        }
+
+        /// <summary>
+        /// 初始化激励广告
+        /// </summary>
+        public override void Init(AdProviderParameters adProviderParameters)
+        {
+            base.Init(adProviderParameters);
+
             MaxSdkCallbacks.Rewarded.OnAdLoadedEvent += OnRewardAdLoaded;
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += OnRewardAdLoadFailed;
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent += OnRewardAdDisplayed;
@@ -16,83 +29,175 @@ namespace Duskvern
             MaxSdkCallbacks.Rewarded.OnAdClickedEvent += OnRewardAdClicked;
             MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += OnRewardAdDisplayFailed;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += OnRewardReceived;
+            MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += OnRewardAdRevenuePaid;
+        }
 
-            LoadRewardAd();
+        public override void Dispose()
+        {
+            base.Dispose();
+            MaxSdkCallbacks.Rewarded.OnAdLoadedEvent -= OnRewardAdLoaded;
+            MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent -= OnRewardAdLoadFailed;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent -= OnRewardAdDisplayed;
+            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent -= OnRewardAdHidden;
+            MaxSdkCallbacks.Rewarded.OnAdClickedEvent -= OnRewardAdClicked;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent -= OnRewardAdDisplayFailed;
+            MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent -= OnRewardReceived;
+            MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent -= OnRewardAdRevenuePaid;
         }
 
         /// <summary>
-        /// 加载 Reward 广告
+        /// 加载激励广告
         /// </summary>
-        public void LoadRewardAd()
+        public override void LoadAd()
         {
-            MaxSdk.LoadRewardedAd(rewardAdUnitId);
+            if (isLoading)
+            {
+                Logger.LogAd("激励广告正在加载已加载");
+                return;
+            }
+
+            if (IsReady)
+            {
+                Logger.LogAd("激励广告已加载");
+                return;
+            }
+
+            isLoading = true;
+            Logger.LogAd("开始加载激励广告");
+            MaxSdk.LoadRewardedAd(adUnitId);
         }
 
         /// <summary>
-        /// 播放 Reward 广告
+        /// 展示激励广告
         /// </summary>
-        public void ShowRewardAd()
+        public override void ShowAd()
         {
-            if (MaxSdk.IsRewardedAdReady(rewardAdUnitId))
+            if (!IsReady)
             {
-                MaxSdk.ShowRewardedAd(rewardAdUnitId);
+                Logger.LogAd("激励广告未准备好");
+                AdEnd();
+                adProviderParameters.OnAdHidden?.Invoke(false, string.Empty, this);
+                return;
             }
-            else
-            {
-                Debug.Log("Reward广告未准备好");
-            }
+
+            hasRevenuePaid = false;
+            hasRewarded = false;
+            MaxSdk.ShowRewardedAd(adUnitId);
         }
 
-        // 广告加载成功
+        // 激励广告加载成功
         private void OnRewardAdLoaded(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            Debug.Log("Reward广告加载成功");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告加载成功, 但不是当前激励广告");
+                return;
+            }
+
+            isLoading = false;
+            ecpm = SDKTools.NormalECPM(adInfo.Revenue);
+            currentRetryCount = 0;
+            adProviderParameters.OnAdLoaded?.Invoke(adInfo?.ToString(), this);
+            Logger.LogAd("激励广告加载成功 该条广告ECPM为: " + ecpm);
         }
 
-        // 广告加载失败
+        // 激励广告加载失败
         private void OnRewardAdLoadFailed(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
         {
-            Debug.Log($"Reward广告加载失败: {errorInfo.Message}");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告加载失败, 但不是当前激励广告");
+                return;
+            }
 
-            // 失败后重新加载
+            isLoading = false;
+            Logger.LogAd($"激励广告加载失败: {errorInfo.Message}");
+            adProviderParameters.OnAdLoadFailedEvent?.Invoke(errorInfo?.ToString(), this);
+
+            if (currentRetryCount < retryLoadCount)
+            {
+                currentRetryCount++;
+                RetryLoadAd(currentRetryCount).Forget();
+            }
         }
 
-        // 广告展示成功
+        // 激励广告展示成功
         private void OnRewardAdDisplayed(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            Debug.Log("Reward广告开始展示");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告展示成功, 但不是当前激励广告");
+                return;
+            }
+
+            Logger.LogAd("激励广告开始展示");
+            adProviderParameters.OnAdDisplayed?.Invoke(adInfo?.ToString(), this);
         }
 
-        // 广告关闭
+        // 激励广告关闭
         private void OnRewardAdHidden(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            Debug.Log("Reward广告关闭");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告关闭, 但不是当前激励广告");
+                return;
+            }
 
-            // 提前加载下一条
-            LoadRewardAd();
+            bool success = hasRewarded && hasRevenuePaid;
+            adProviderParameters.OnAdHidden?.Invoke(success, adInfo?.ToString(), this);
+            Logger.LogAd("激励广告关闭, 是否可以奖励: " + success);
+            AdEnd();
         }
 
-        // 广告点击
+        // 激励广告点击
         private void OnRewardAdClicked(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            Debug.Log("Reward广告被点击");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告点击, 但不是当前激励广告");
+                return;
+            }
+
+            Logger.LogAd("激励广告被点击");
+            adProviderParameters.OnAdClicked?.Invoke(adInfo?.ToString(), this);
         }
 
-        // 广告展示失败
+        // 激励广告展示失败
         private void OnRewardAdDisplayFailed(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
         {
-            Debug.Log($"Reward广告展示失败: {errorInfo.Message}");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告展示失败, 但不是当前激励广告");
+                return;
+            }
 
-            LoadRewardAd();
+            Logger.LogAd($"激励广告展示失败: {errorInfo.Message}");
+            adProviderParameters.OnAdDisplayFailed?.Invoke(adInfo?.ToString(), errorInfo?.ToString(), this);
+            AdEnd();
         }
 
         // 用户获得奖励
         private void OnRewardReceived(string adUnitId, MaxSdk.Reward reward, MaxSdkBase.AdInfo adInfo)
         {
-            Debug.Log($"获得奖励: {reward.Amount} {reward.Label}");
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告获得奖励, 但不是当前激励广告");
+                return;
+            }
+            hasRewarded = true;
+        }
 
-            // 在这里发奖励
-            // AddCoin();
+        private void OnRewardAdRevenuePaid(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            if (adUnitId != this.adUnitId)
+            {
+                Logger.LogAd("激励广告收益支付, 但不是当前激励广告");
+                return;
+            }
+
+            hasRevenuePaid = true;
+            Logger.LogAd("激励广告收益支付成功");
+            adProviderParameters.OnAdRevenuePaid?.Invoke(adInfo?.ToString(), this);
         }
     }
 }

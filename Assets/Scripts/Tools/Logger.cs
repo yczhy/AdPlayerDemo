@@ -5,6 +5,7 @@ namespace Duskvern
     {
         public const string AdLog = "AdLog";
         public const string PoolLog = "PoolLog";
+        public const string UI = "UI";
     }
 
     public static class Logger
@@ -24,6 +25,11 @@ namespace Duskvern
         public static void LogPool(string message)
         {
             Log(LogType.PoolLog, message);
+        }
+
+        public static void LogUI(string message)
+        {
+            Log(LogType.UI, message);
         }
 
         public static void LogWarning(string Tag, string message)

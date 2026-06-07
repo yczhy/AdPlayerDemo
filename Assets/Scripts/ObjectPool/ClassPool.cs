@@ -36,6 +36,12 @@ namespace Duskvern
                 return;
             }
 
+            if (cache.Contains(instance))
+            {
+                Logger.LogWarning(LogType.PoolLog, "对象池中已存在该对象 " + typeof(T).Name);
+                return;
+            }
+
             if (cache.Count >= maxValue)
             {
                 Logger.LogWarning(LogType.PoolLog, "对象池已满，无法放回对象 进行销毁" + typeof(T).Name);
@@ -43,14 +49,8 @@ namespace Duskvern
                 return;
             }
 
-            if (cache.Contains(instance))
-            {
-                Logger.LogWarning(LogType.PoolLog, "对象池中已存在该对象 " + typeof(T).Name);
-                return;
-            }
             instance.OnDeSpawn();
             cache.Add(instance);
         }
     }
 }
-

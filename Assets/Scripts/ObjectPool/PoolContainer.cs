@@ -17,15 +17,10 @@ namespace Duskvern
                     if (Warnings) Logger.LogPoolWarning($"Prefab is null");
                     return;
                 }
-                if (value != null && value.GetComponent<IPoolable>() == null)
-                {
-                    if (Warnings) Logger.LogPoolWarning($"Prefab {value.name} does not implement IPoolable interface");
-                    return;
-                }
                 prefab = value;
             }
         }
-        public string Name => prefab.name; // 对象池的名称
+        public string Name => prefab != null ? prefab.name : "NullPrefab"; // 对象池的名称
 
         private Transform deactivatedTransform; // 存放已回收对象的父级对象 --- 将物体直接放到这个对象下进行隐藏，避免Setactive(false)带来的性能问题
         public Transform DeactivatedTransform => deactivatedTransform;
@@ -61,7 +56,7 @@ namespace Duskvern
         public int SpawnedCount => spawnedClonesList.Count; // 已生成对象数量
         public int TotalCount => DespawnedCount + SpawnedCount; // 总数量
 
-        private List<IPoolable> TempPoolables;
+        private readonly List<IPoolable> TempPoolables = new();
 
         private PoolModule poolModule;
 
@@ -76,7 +71,6 @@ namespace Duskvern
             persistent = poolContainerParam.persistent;
             stamp = poolContainerParam.stamp;
             warnings = poolContainerParam.warnings;
-            TempPoolables = poolContainerParam.tempPoolables;
             deactivatedTransform = poolContainerParam.dectivatedParent;
             return this;
         }
@@ -109,7 +103,7 @@ namespace Duskvern
         {
             if (Prefab == null)
             {
-                if (Warnings) Logger.LogPoolWarning($"Prefab is null, pool name: {Name}");
+                if (Warnings) Logger.LogPoolWarning("Prefab is null");
                 return false;
             }
 
@@ -304,6 +298,7 @@ namespace Duskvern
                     if (delay.clone == clone)
                     {
                         delays.RemoveAt(i);
+                        ClassPool<Delay>.Push(delay);
                         break;
                     }
                 }
@@ -393,6 +388,32 @@ namespace Duskvern
             }
             delays.Clear();
         }
+
+        public void DestroyAll()
+        {
+            DespawnAll();
+
+            for (var i = deSpawnedClonesList.Count - 1; i >= 0; i--)
+            {
+                var clone = deSpawnedClonesList[i];
+                if (clone == null)
+                {
+                    continue;
+                }
+
+                if (Application.isPlaying)
+                {
+                    Object.Destroy(clone);
+                }
+                else
+                {
+                    Object.DestroyImmediate(clone);
+                }
+            }
+
+            deSpawnedClonesList.Clear();
+            spawnedClonesList.Clear();
+            delays.Clear();
+        }
     }
 }
-

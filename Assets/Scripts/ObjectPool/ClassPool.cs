@@ -10,14 +10,9 @@ namespace Duskvern
         public static int MaxValue { get => maxValue; set => maxValue = value; }
         private static List<T> cache = new List<T>();
 
-        public static T Get()
+        public static T Pop()
         {
             var count = cache.Count;
-            if (count > maxValue)
-            {
-                Logger.LogWarning(LogType.PoolLog, "对象池已满，无法获取对象 " + typeof(T).Name);
-                return null;
-            }
             T instance = null;
             var index = count - 1;
             if (index >= 0)
@@ -29,12 +24,11 @@ namespace Duskvern
             {
                 instance = new T();
             }
-            instance.InPool = false;
-            instance.Spawn();
+            instance.OnSpawn();
             return instance;
         }
 
-        public static void Release(T instance)
+        public static void Push(T instance)
         {
             if (instance == null)
             {
@@ -42,15 +36,19 @@ namespace Duskvern
                 return;
             }
 
-            if (cache.Count > maxValue)
+            if (cache.Count >= maxValue)
             {
                 Logger.LogWarning(LogType.PoolLog, "对象池已满，无法放回对象 进行销毁" + typeof(T).Name);
-                instance.DeSpawn();
+                instance.OnDeSpawn();
                 return;
             }
 
-            instance.InPool = true;
-            instance.DeSpawn();
+            if (cache.Contains(instance))
+            {
+                Logger.LogWarning(LogType.PoolLog, "对象池中已存在该对象 " + typeof(T).Name);
+                return;
+            }
+            instance.OnDeSpawn();
             cache.Add(instance);
         }
     }

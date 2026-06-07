@@ -57,12 +57,12 @@ namespace Duskvern
         private bool isInPool = false;
         public bool InPool { get => isInPool; set => isInPool = value; }
 
-        public void DeSpawn()
+        public void OnDeSpawn()
         {
             
         }
 
-        public void Spawn()
+        public void OnSpawn()
         {
             FailCallback = null;
             SuccessCallback = null;

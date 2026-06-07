@@ -14,7 +14,12 @@ namespace Duskvern
 
         public static void Log(string logType, string message)
         {
-            
+            Debug.Log($"[{logType}] {message}");
+        }
+
+        public static void LogWarning(string logType, string message)
+        {
+            Debug.LogWarning($"[{logType}] {message}");
         }
 
         public static void LogAd(string message)
@@ -27,14 +32,14 @@ namespace Duskvern
             Log(LogType.PoolLog, message);
         }
 
+        public static void LogPoolWarning(string message)
+        {
+            LogWarning(LogType.PoolLog, message);
+        }
+
         public static void LogUI(string message)
         {
             Log(LogType.UI, message);
-        }
-
-        public static void LogWarning(string Tag, string message)
-        {
-            Debug.LogWarning($"[{Tag}] {message}");
         }
     }
 }

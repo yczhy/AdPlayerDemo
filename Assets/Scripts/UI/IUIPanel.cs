@@ -3,27 +3,24 @@ using UnityEngine;
 
 namespace Duskvern
 {
+    public static partial class UIPanelName
+    {
+        
+    }
+
+    public abstract class IOpenUIParams
+    {
+        
+    }
+
     public abstract class IUIPanel : MonoBehaviour
     {
         public abstract string uiName { get; }
+        protected UITransitionAnimator uITransitionAnimator;
 
-        protected virtual void Awake()
-        {
-            
-        }
+        protected virtual void Awake(){ }
 
-        public async UniTask OpenAnimation()
-        {
-            
-        }
-
-        // 方式一
         public abstract void OnOpen(IOpenUIParams openUIParams);
-
-        public void CloseAnimation()
-        {
-            
-        }
 
         public abstract void OnClose();
     }
@@ -38,7 +35,19 @@ namespace Duskvern
                 return;
             }
 
-            OnOpen(param);
+            uITransitionAnimator = GetComponent<UITransitionAnimator>();
+            if (uITransitionAnimator != null)
+            {
+                uITransitionAnimator.OpenUI(OpenUI).Forget();
+                return;
+            }
+
+            OpenUI();
+
+            void OpenUI()
+            {
+                OnOpen(param);
+            }
         }
 
         protected abstract void OnOpen(Tparam openUIParams);

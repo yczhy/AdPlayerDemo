@@ -79,7 +79,7 @@ namespace Duskvern
             bool InterstitialReplaceReward = false, bool RewardReplaceInterstitial = false, 
             bool openPlayAdCondition = false, AdPlatform adPlatform = AdPlatform.None)
         {
-            var parameters = ClassPool<PlayAdParameters>.Get();
+            var parameters = ClassPool<PlayAdParameters>.Pop();
             parameters.Init(playAdPos, adType, InterstitialReplaceReward, RewardReplaceInterstitial, openPlayAdCondition, isPriceRelations, adPlatform, FailCallback, SuccessCallback);
             PlayAd(parameters);
         }

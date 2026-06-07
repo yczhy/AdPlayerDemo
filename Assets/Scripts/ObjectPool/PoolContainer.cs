@@ -386,14 +386,10 @@ namespace Duskvern
             }
             spawnedClonesList.Clear();
 
-            for (var i = delays.Count - 1; i >= 0; i--)
+            for (var i = delays.Count - 1; i >= 0; i--) 
             {
                 var delay = delays[i];
-                if (delay.clone != null)
-                {
-                    DespawnNow(delay.clone);
-                    ClassPool<Delay>.Push(delay);
-                }
+                ClassPool<Delay>.Push(delay);
             }
             delays.Clear();
         }

@@ -18,6 +18,7 @@ namespace Duskvern
             cloneToPoolMap.Clear();
             tempPoolable.Clear();
             poolRoot = new GameObject("PoolRoot").transform;
+            GameObject.DontDestroyOnLoad(poolRoot);
             poolDeActiveRoot = new GameObject("PoolDeActiveRoot").transform;
             poolDeActiveRoot.SetParent(poolRoot);
             poolDeActiveRoot.gameObject.SetActive(false);
@@ -30,6 +31,7 @@ namespace Duskvern
             {
                 _param.dectivatedParent = poolDeActiveRoot;
                 _param.tempPoolables = tempPoolable;
+                _param.poolModule = this;
             }
             AddPools(poolContainerParams);
             return this;

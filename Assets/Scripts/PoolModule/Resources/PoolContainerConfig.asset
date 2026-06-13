@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0c6436a63c24328b387e7f253c369c, type: 3}
   m_Name: PoolContainerConfig
   m_EditorClassIdentifier: Assembly-CSharp::Duskvern.PoolContainerConfig
+  poolContainerParams: []

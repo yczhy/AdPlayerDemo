@@ -6,6 +6,7 @@ namespace Duskvern
     public static class PoolUtil
     {
         private static PoolModule poolModule;
+        public static bool IsInitialized => poolModule != null;
 
         public static void Init(List<PoolContainerParam> _poolContainerParams = null)
         {

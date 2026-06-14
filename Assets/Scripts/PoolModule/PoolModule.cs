@@ -156,26 +156,33 @@ namespace Duskvern
 
         public void Push(GameObject _Obj, float _delay = 0f)
         {
+            TryPush(_Obj, _delay);
+        }
+
+        public bool TryPush(GameObject _Obj, float _delay = 0f)
+        {
             if (_Obj == null)
             {
                 Logger.LogPoolWarning($"Object is null");
-                return;
+                return false;
             }
             if (cloneToPoolMap.TryGetValue(_Obj, out var prefab))
             {
                 if (pools.TryGetValue(prefab, out var pool))
                 {
                     pool.Despawn(_Obj, _delay);
+                    return true;
                 }
                 else
                 {
                     Logger.LogPoolWarning($"Pool for {prefab.name} not found");
-                    return;
+                    return false;
                 }
             }
             else
             {
                 Logger.LogPoolWarning($"Object {_Obj.name} not found in cloneToPoolMap");
+                return false;
             }
         }
 

@@ -128,6 +128,16 @@ namespace Duskvern
             poolModule.Push(_obj, _delay);
         }
 
+        public static bool TryPush(GameObject _obj, float _delay = 0f)
+        {
+            if (!CheckInit())
+            {
+                return false;
+            }
+
+            return poolModule.TryPush(_obj, _delay);
+        }
+
         public static void AddPool(GameObject _prefab)
         {
             if (!CheckInit())

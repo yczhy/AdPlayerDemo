@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "061314200e2f03307c4d90b448e1de7b85431905"
     },
+    "com.cysharp.zlinq": {
+      "version": "https://github.com/Cysharp/ZLinq.git?path=src/ZLinq.Unity/Assets/ZLinq.Unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "357a6382acffb612764bdfe6f0fe1ba9971878d5"
+    },
     "com.unity.addressables": {
       "version": "2.9.1",
       "depth": 0,

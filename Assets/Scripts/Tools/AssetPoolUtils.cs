@@ -1,62 +1,132 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Duskvern
 {
-    // 只负责对象的取出和回收：
-    // 1. 取出对象：先看对象池，没有则实例化
-    // 2. 回收对象：先看对象池，没有则销毁
+    // 传入资源路径，先通过 AssetUtils 加载 prefab，再通过对象池生成实例。
     public static class AssetPoolUtils
     {
-        public static GameObject Pop(GameObject prefab)
+        public static GameObject Spawn(string assetPath)
         {
-            return Pop(prefab, Vector3.zero, Quaternion.identity, Vector3.one, null, false);
+            return Spawn(assetPath, Vector3.zero, Quaternion.identity, Vector3.one, null, false);
         }
 
-        public static GameObject Pop(GameObject prefab, Transform parent, bool worldPositionStays = false)
+        public static GameObject Spawn(string assetPath, Transform parent, bool worldPositionStays = false)
         {
-            return Pop(prefab, Vector3.zero, Quaternion.identity, Vector3.one, parent, worldPositionStays);
+            return Spawn(assetPath, Vector3.zero, Quaternion.identity, Vector3.one, parent, worldPositionStays);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition)
+        public static GameObject Spawn(string assetPath, Vector3 localPosition)
         {
-            return Pop(prefab, localPosition, Quaternion.identity, Vector3.one, null, false);
+            return Spawn(assetPath, localPosition, Quaternion.identity, Vector3.one, null, false);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition, Transform parent,
+        public static GameObject Spawn(string assetPath, Vector3 localPosition, Transform parent,
             bool worldPositionStays = false)
         {
-            return Pop(prefab, localPosition, Quaternion.identity, Vector3.one, parent, worldPositionStays);
+            return Spawn(assetPath, localPosition, Quaternion.identity, Vector3.one, parent, worldPositionStays);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
+        public static GameObject Spawn(string assetPath, Vector3 localPosition, Quaternion localRotation)
         {
-            return Pop(prefab, localPosition, localRotation, Vector3.one, null, false);
+            return Spawn(assetPath, localPosition, localRotation, Vector3.one, null, false);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition, Quaternion localRotation,
+        public static GameObject Spawn(string assetPath, Vector3 localPosition, Quaternion localRotation,
             Transform parent, bool worldPositionStays = false)
         {
-            return Pop(prefab, localPosition, localRotation, Vector3.one, parent, worldPositionStays);
+            return Spawn(assetPath, localPosition, localRotation, Vector3.one, parent, worldPositionStays);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition, Quaternion localRotation,
+        public static GameObject Spawn(string assetPath, Vector3 localPosition, Quaternion localRotation,
             Vector3 localScale)
         {
-            return Pop(prefab, localPosition, localRotation, localScale, null, false);
+            return Spawn(assetPath, localPosition, localRotation, localScale, null, false);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition, Quaternion localRotation,
+        public static GameObject Spawn(string assetPath, Vector3 localPosition, Quaternion localRotation,
             Vector3 localScale, Transform parent)
         {
-            return Pop(prefab, localPosition, localRotation, localScale, parent, false);
+            return Spawn(assetPath, localPosition, localRotation, localScale, parent, false);
         }
 
-        public static GameObject Pop(GameObject prefab, Vector3 localPosition, Quaternion localRotation,
+        public static GameObject Spawn(string assetPath, Vector3 localPosition, Quaternion localRotation,
+            Vector3 localScale, Transform parent, bool worldPositionStays)
+        {
+            var prefab = LoadPrefab(assetPath);
+            return SpawnByPrefab(prefab, localPosition, localRotation, localScale, parent, worldPositionStays);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath)
+        {
+            return SpawnAsync(assetPath, Vector3.zero, Quaternion.identity, Vector3.one, null, false);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Transform parent,
+            bool worldPositionStays = false)
+        {
+            return SpawnAsync(assetPath, Vector3.zero, Quaternion.identity, Vector3.one, parent, worldPositionStays);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition)
+        {
+            return SpawnAsync(assetPath, localPosition, Quaternion.identity, Vector3.one, null, false);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition, Transform parent,
+            bool worldPositionStays = false)
+        {
+            return SpawnAsync(assetPath, localPosition, Quaternion.identity, Vector3.one, parent, worldPositionStays);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition,
+            Quaternion localRotation)
+        {
+            return SpawnAsync(assetPath, localPosition, localRotation, Vector3.one, null, false);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition,
+            Quaternion localRotation, Transform parent, bool worldPositionStays = false)
+        {
+            return SpawnAsync(assetPath, localPosition, localRotation, Vector3.one, parent, worldPositionStays);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition,
+            Quaternion localRotation, Vector3 localScale)
+        {
+            return SpawnAsync(assetPath, localPosition, localRotation, localScale, null, false);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition,
+            Quaternion localRotation, Vector3 localScale, Transform parent)
+        {
+            return SpawnAsync(assetPath, localPosition, localRotation, localScale, parent, false);
+        }
+
+        public static UniTask<GameObject> SpawnAsync(string assetPath, Vector3 localPosition,
+            Quaternion localRotation, Vector3 localScale, Transform parent, bool worldPositionStays)
+        {
+            return SpawnAsyncCore(assetPath, localPosition, localRotation, localScale, parent, worldPositionStays);
+        }
+
+        private static async UniTask<GameObject> SpawnAsyncCore(string assetPath, Vector3 localPosition,
+            Quaternion localRotation, Vector3 localScale, Transform parent, bool worldPositionStays)
+        {
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                Logger.LogPoolWarning("Asset path is null or empty");
+                return null;
+            }
+
+            var prefab = await AssetUtils.LoadAsync<GameObject>(assetPath);
+            return SpawnByPrefab(prefab, localPosition, localRotation, localScale, parent, worldPositionStays);
+        }
+
+        private static GameObject SpawnByPrefab(GameObject prefab, Vector3 localPosition, Quaternion localRotation,
             Vector3 localScale, Transform parent, bool worldPositionStays)
         {
             if (prefab == null)
             {
-                Logger.LogPoolWarning("Prefab is null");
                 return null;
             }
 
@@ -72,7 +142,7 @@ namespace Duskvern
             return Instantiate(prefab, localPosition, localRotation, localScale, parent, worldPositionStays);
         }
 
-        public static void Push(GameObject obj, float delay = 0f)
+        public static void Despawn(GameObject obj, float delay = 0f)
         {
             if (obj == null)
             {
@@ -86,6 +156,17 @@ namespace Duskvern
             }
 
             DestroyObject(obj, delay);
+        }
+
+        private static GameObject LoadPrefab(string assetPath)
+        {
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                Logger.LogPoolWarning("Asset path is null or empty");
+                return null;
+            }
+
+            return AssetUtils.Load<GameObject>(assetPath);
         }
 
         private static GameObject Instantiate(GameObject prefab, Vector3 localPosition, Quaternion localRotation,

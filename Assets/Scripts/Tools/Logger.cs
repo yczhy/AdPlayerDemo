@@ -42,6 +42,11 @@ namespace Duskvern
             Log(LogType.UI, message);
         }
 
+        public static void LogUIWarning(string message)
+        {
+            LogWarning(LogType.UI, message);
+        }
+
         public static void LogError(string tag, string message)
         {
             Debug.LogError($"[{tag}] {message}");

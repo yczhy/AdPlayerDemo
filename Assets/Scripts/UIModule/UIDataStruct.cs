@@ -6,12 +6,12 @@ namespace Duskvern
 {
     public enum UIPanelLayer
     {
-        BaseLayer,
-        PopLayer,
-        TeachLayer,
+        BaseLayer = 0,
+        PopLayer = 1,
+        TeachLayer = 2,
     }
 
-    public class GamePanelParams : IOpenUIParams
+    public class GamePanelParams : IOpenUIParam
     {
         
     }

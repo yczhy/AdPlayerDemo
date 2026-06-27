@@ -1,31 +1,24 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Duskvern
 {
-    public class Panelconfig
+    public class PanelConfig : MonoBehaviour
     {
-        
+        public UIPanelType uIPanelType;
+        public UIPanelLayer uIPanelLayer;
+        public bool mulitOpen;
+        public bool cache;
+        public bool nativeClose;
     }
 
-    [CreateAssetMenu(fileName = "UIConfig", menuName = "Duskvern//UIConfig")]
-    public class UIConfig : ScriptableObject
+    public enum UIPanelType
     {
-        [ShowInInspector]
-        private Dictionary<string, Panelconfig> panelconfig = new ();
-
-        public Panelconfig GetPanelConfig(string panelname)
-        {
-            if (panelconfig.ContainsKey(panelname))
-            {
-                return panelconfig[panelname];
-            }
-            Logger.LogUI("Panelconfig not found");
-            return null;
-        }
-
-
+        GamePanel,
     }
-
 }

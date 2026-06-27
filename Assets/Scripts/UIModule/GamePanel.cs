@@ -1,29 +1,24 @@
-using Duskvern;
-using UnityEngine;
+// using Duskvern;
+// using UnityEngine;
 
-public class GamePanel : IUIPanel<ShopOpenParams>
-{
-    public override string uiName => UIPanelName.GamePanel;
+// public class GamePanel : IUIPanel<ShopOpenParams>
+// {
 
-    public override void OnClose()
-    {
+//     public override void OnClose()
+//     {
 
-    }
+//     }
 
-    protected override void OnOpen(ShopOpenParams openUIParams)
-    {
+//     protected override void OnOpen(ShopOpenParams openUIParams)
+//     {
 
-    }
-}
+//     }
+// }
 
-public sealed class ShopOpenParams : IOpenUIParams
-{
-    public int TabIndex;
-    public string GoodsId;
-}
+// public sealed class ShopOpenParams : IOpenUIParam
+// {
+//     public int TabIndex;
+//     public string GoodsId;
+// }
 
-public static partial class UIPanelName
-{
-    public const string GamePanel = "GamePanel";
-}
 

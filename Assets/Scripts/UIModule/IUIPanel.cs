@@ -14,7 +14,7 @@ namespace Duskvern
     }
 
     [RequireComponent(typeof(PanelConfig))]
-    public abstract class IUIPanel : MonoBehaviour
+    public abstract class IUIPanelBase : MonoBehaviour
     {
         public abstract PanelConfig panelConfig { get; }
         protected UITransitionAnimator uITransitionAnimator;
@@ -23,16 +23,16 @@ namespace Duskvern
         {
             if (panelConfig == null)
             {
-                Logger.LogUIWarning($"UIPanel {typeof(IUIPanel).Name} missing PanelConfig");
+                Logger.LogUIWarning($"UIPanel {typeof(IUIPanelBase).Name} missing PanelConfig");
             }
             var cfgs = GetComponents<PanelConfig>();
             if (cfgs.Length > 1)
             {
-                Logger.LogUIWarning($"UIPanel {typeof(IUIPanel).Name} has more than 1 PanelConfig");
+                Logger.LogUIWarning($"UIPanel {typeof(IUIPanelBase).Name} has more than 1 PanelConfig");
             }
         }
 
-        public virtual async UniTask<IUIPanel> OnOpen(IOpenUIParam openUIParams)
+        public virtual async UniTask<IUIPanelBase> OnOpen(IOpenUIParam openUIParams)
         {
             return this;
         }
@@ -40,10 +40,15 @@ namespace Duskvern
         public abstract void OnClose();
     }
 
-    public abstract class IUIPanel<Tparam> : IUIPanel where Tparam : IOpenUIParam
+    public abstract class IUIPanel<Tparam> : IUIPanelBase where Tparam : IOpenUIParam
     {
-        public sealed override async UniTask<IUIPanel> OnOpen(IOpenUIParam openUIParams)
+        public sealed override async UniTask<IUIPanelBase> OnOpen(IOpenUIParam openUIParams)
         {
+            if (openUIParams == null)
+            {
+                Logger.LogUI($"UIPanel {typeof(IUIPanel<Tparam>).Name} open with null param");
+                return this;
+            }
             if (openUIParams is not Tparam param)
             {
                 Logger.LogUI($"UIPanel {typeof(IUIPanel<Tparam>).Name} open with wrong param type {openUIParams.GetType().Name}");
@@ -66,6 +71,6 @@ namespace Duskvern
             }
         }
 
-        protected abstract IUIPanel OnOpen(Tparam openUIParams);
+        protected abstract IUIPanelBase OnOpen(Tparam openUIParams);
     }
 }

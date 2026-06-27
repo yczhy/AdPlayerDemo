@@ -92,7 +92,7 @@ namespace Duskvern
             ClearContainerElments(_prefab);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
             Vector3 localScale, Transform parent, bool worldPositionStays)
         {
             if (_prefab == null)
@@ -110,48 +110,48 @@ namespace Duskvern
             return pool?.Spawn(localPosition, localRotation, localScale, parent, worldPositionStays);
         }
 
-        public GameObject Pop(GameObject _prefab)
+        public GameObject Spawn(GameObject _prefab)
         {
-            return Pop(_prefab, Vector3.zero, Quaternion.identity, Vector3.one, null, false);
+            return Spawn(_prefab, Vector3.zero, Quaternion.identity, Vector3.one, null, false);
         }
 
-        public GameObject Pop(GameObject _prefab, Transform parent, bool worldPositionStays = false)
+        public GameObject Spawn(GameObject _prefab, Transform parent, bool worldPositionStays = false)
         {
-            return Pop(_prefab, Vector3.zero, Quaternion.identity, Vector3.one, parent, worldPositionStays);
+            return Spawn(_prefab, Vector3.zero, Quaternion.identity, Vector3.one, parent, worldPositionStays);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition)
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition)
         {
-            return Pop(_prefab, localPosition, Quaternion.identity, Vector3.one, null, false);
+            return Spawn(_prefab, localPosition, Quaternion.identity, Vector3.one, null, false);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition, Transform parent,
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition, Transform parent,
             bool worldPositionStays = false)
         {
-            return Pop(_prefab, localPosition, Quaternion.identity, Vector3.one, parent, worldPositionStays);
+            return Spawn(_prefab, localPosition, Quaternion.identity, Vector3.one, parent, worldPositionStays);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition, Quaternion localRotation)
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition, Quaternion localRotation)
         {
-            return Pop(_prefab, localPosition, localRotation, Vector3.one, null, false);
+            return Spawn(_prefab, localPosition, localRotation, Vector3.one, null, false);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
             Transform parent, bool worldPositionStays = false)
         {
-            return Pop(_prefab, localPosition, localRotation, Vector3.one, parent, worldPositionStays);
+            return Spawn(_prefab, localPosition, localRotation, Vector3.one, parent, worldPositionStays);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
             Vector3 localScale)
         {
-            return Pop(_prefab, localPosition, localRotation, localScale, null, false);
+            return Spawn(_prefab, localPosition, localRotation, localScale, null, false);
         }
 
-        public GameObject Pop(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
+        public GameObject Spawn(GameObject _prefab, Vector3 localPosition, Quaternion localRotation,
             Vector3 localScale, Transform parent)
         {
-            return Pop(_prefab, localPosition, localRotation, localScale, parent, false);
+            return Spawn(_prefab, localPosition, localRotation, localScale, parent, false);
         }
 
         public void Push(GameObject _Obj, float _delay = 0f)

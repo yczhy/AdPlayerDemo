@@ -132,7 +132,7 @@ namespace Duskvern
 
             if (PoolUtil.IsInitialized)
             {
-                var clone = PoolUtil.Pop(prefab, localPosition, localRotation, localScale, parent, worldPositionStays);
+                var clone = PoolUtil.Spawn(prefab, localPosition, localRotation, localScale, parent, worldPositionStays);
                 if (clone != null)
                 {
                     return clone;

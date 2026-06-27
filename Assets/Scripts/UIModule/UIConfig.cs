@@ -12,7 +12,7 @@ namespace Duskvern
     {
         public UIPanelType uIPanelType;
         public UIPanelLayer uIPanelLayer;
-        public bool mulitOpen;
+        public bool multiOpen;
         public bool cache;
         public bool nativeClose;
     }

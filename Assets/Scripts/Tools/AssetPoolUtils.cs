@@ -150,7 +150,7 @@ namespace Duskvern
                 return;
             }
 
-            if (PoolUtil.IsInitialized && PoolUtil.TryPush(obj, delay))
+            if (PoolUtil.IsInitialized && PoolUtil.TryDeSpawn(obj, delay))
             {
                 return;
             }

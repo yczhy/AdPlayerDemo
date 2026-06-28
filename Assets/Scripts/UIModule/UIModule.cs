@@ -92,7 +92,7 @@ namespace Duskvern
             if (uiLayers.TryGetValue(layer, out var layerObj))
             {
                 beOpenPanel.transform.SetParent(layerObj.transform);
-                await beOpenPanel.OnOpen(_openUIParams);
+                await beOpenPanel.Open(_openUIParams);
             }
             else
             {
@@ -108,7 +108,8 @@ namespace Duskvern
         {
             if (panel == null) return;
             openPanels.Remove(panel);
-            panel.OnClose();
+            PoolUtil.DeSpawn(panel.gameObject);
+            panel.Close();
         }
 
         private async UniTask<IUIPanelBase> CreatePanelInstance(UIPanelType uIPanelType)

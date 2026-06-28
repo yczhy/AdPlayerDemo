@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Duskvern
 {
-    public enum PushStrategyType
+    public enum DeSpawnStrategyType
     {
         ActivateAndDeactivate,
         DeactivateViaHierarchy
@@ -21,7 +21,7 @@ namespace Duskvern
     {
         public GameObject prefab;
         public Transform dectivatedParent; // 只有 PushStrategyType 为 DeactivateViaHierarchy 时有效
-        public PushStrategyType pushStrategyType;
+        public DeSpawnStrategyType pushStrategyType;
         public NotificationType notificationType;
         public int capacity = 100;
         public bool recycle = false;
@@ -31,7 +31,7 @@ namespace Duskvern
         public List<IPoolable> tempPoolables;
         public PoolModule poolModule;
 
-        public PoolContainerParam(PoolModule _poolModule, GameObject _prefab, List<IPoolable> _tempPoolables, PushStrategyType _pushStrategyType, Transform _dectivatedParent, NotificationType _notificationType, int _capacity = 100, bool _recycle = false, bool _persistent = false, bool _stamp = true, bool _warnings = true)
+        public PoolContainerParam(PoolModule _poolModule, GameObject _prefab, List<IPoolable> _tempPoolables, DeSpawnStrategyType _pushStrategyType, Transform _dectivatedParent, NotificationType _notificationType, int _capacity = 100, bool _recycle = false, bool _persistent = false, bool _stamp = true, bool _warnings = true)
         {
             poolModule = _poolModule;
             prefab = _prefab;
@@ -50,7 +50,7 @@ namespace Duskvern
         {
             prefab = null;
             dectivatedParent = null;
-            pushStrategyType = PushStrategyType.ActivateAndDeactivate;
+            pushStrategyType = DeSpawnStrategyType.ActivateAndDeactivate;
             notificationType = NotificationType.BroadcastIPoolable;
             capacity = 100;
             recycle = false;

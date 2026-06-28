@@ -25,8 +25,8 @@ namespace Duskvern
         private Transform deactivatedTransform; // 存放已回收对象的父级对象 --- 将物体直接放到这个对象下进行隐藏，避免Setactive(false)带来的性能问题
         public Transform DeactivatedTransform => deactivatedTransform;
 
-        private PushStrategyType pushStrategyType; // 回收策略
-        public PushStrategyType PushStrategyType => pushStrategyType;
+        private DeSpawnStrategyType pushStrategyType; // 回收策略
+        public DeSpawnStrategyType PushStrategyType => pushStrategyType;
 
         private NotificationType notificationType; // 回收通知类型
         public NotificationType NotificationType => notificationType;
@@ -131,7 +131,7 @@ namespace Duskvern
                 // 先创建一个
                 clone = CreateClone(localPosition, localRotation, localScale, parent, worldPositionStays);
                 spawnedClonesList.Add(clone);
-                if (pushStrategyType == PushStrategyType.ActivateAndDeactivate)
+                if (pushStrategyType == DeSpawnStrategyType.ActivateAndDeactivate)
                 {
                     clone.SetActive(true);
                 }
@@ -165,7 +165,7 @@ namespace Duskvern
                 SceneManager.MoveGameObjectToScene(clone, SceneManager.GetActiveScene());
             }
 
-            if (PushStrategyType == PushStrategyType.ActivateAndDeactivate)
+            if (PushStrategyType == DeSpawnStrategyType.ActivateAndDeactivate)
             {
                 clone.SetActive(true);
             }
@@ -358,7 +358,7 @@ namespace Duskvern
             deSpawnedClonesList.Add(clone);
             NotifyOnDespawn(clone);
 
-            if (pushStrategyType == PushStrategyType.ActivateAndDeactivate)
+            if (pushStrategyType == DeSpawnStrategyType.ActivateAndDeactivate)
             {
                 clone.SetActive(false);
             }

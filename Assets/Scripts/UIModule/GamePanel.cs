@@ -1,24 +1,28 @@
-// using Duskvern;
-// using UnityEngine;
+using Duskvern;
+using UnityEngine;
 
-// public class GamePanel : IUIPanel<ShopOpenParams>
-// {
+public class GamePanel : IUIPanel<GameOpenParams>
+{
+    protected override void OnAwake()
+    {
+        
+    }
 
-//     public override void OnClose()
-//     {
+    protected override void OnClose()
+    {
+        
+    }
 
-//     }
+    protected override IUIPanelBase OnOpen(GameOpenParams openUIParams)
+    {
+        return this;
+    }
+}
 
-//     protected override void OnOpen(ShopOpenParams openUIParams)
-//     {
-
-//     }
-// }
-
-// public sealed class ShopOpenParams : IOpenUIParam
-// {
-//     public int TabIndex;
-//     public string GoodsId;
-// }
+public sealed class GameOpenParams : IOpenUIParam
+{
+    public int TabIndex;
+    public string GoodsId;
+}
 
 

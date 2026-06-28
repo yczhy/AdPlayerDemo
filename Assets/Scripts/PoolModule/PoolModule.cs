@@ -154,12 +154,12 @@ namespace Duskvern
             return Spawn(_prefab, localPosition, localRotation, localScale, parent, false);
         }
 
-        public void Push(GameObject _Obj, float _delay = 0f)
+        public void DeSpawn(GameObject _Obj, float _delay = 0f)
         {
-            TryPush(_Obj, _delay);
+            TryDeSpawn(_Obj, _delay);
         }
 
-        public bool TryPush(GameObject _Obj, float _delay = 0f)
+        public bool TryDeSpawn(GameObject _Obj, float _delay = 0f)
         {
             if (_Obj == null)
             {
@@ -200,7 +200,7 @@ namespace Duskvern
                     this,
                     _prefab,
                     tempPoolable,
-                    PushStrategyType.ActivateAndDeactivate,
+                    DeSpawnStrategyType.ActivateAndDeactivate,
                     poolDeActiveRoot,
                     NotificationType.BroadcastIPoolable,
                     100,

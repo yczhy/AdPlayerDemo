@@ -5,12 +5,12 @@ namespace Duskvern
 {
     public static partial class UIPanelName
     {
-        
+
     }
 
     public abstract class IOpenUIParam
     {
-        
+
     }
 
     [RequireComponent(typeof(PanelConfig))]
@@ -19,30 +19,43 @@ namespace Duskvern
         public abstract PanelConfig panelConfig { get; }
         protected UITransitionAnimator uITransitionAnimator;
 
-        protected virtual void Awake()
+        private void Awake()
+        {
+            InitializePanel();
+            OnAwake();
+        }
+
+        private void InitializePanel()  // 私有方法，子类无法干扰
         {
             if (panelConfig == null)
             {
-                Logger.LogUIWarning($"UIPanel {typeof(IUIPanelBase).Name} missing PanelConfig");
+                Logger.LogUIWarning($"UIPanel {GetType().Name} missing PanelConfig");
             }
             var cfgs = GetComponents<PanelConfig>();
             if (cfgs.Length > 1)
             {
-                Logger.LogUIWarning($"UIPanel {typeof(IUIPanelBase).Name} has more than 1 PanelConfig");
+                Logger.LogUIWarning($"UIPanel {GetType().Name} has more than 1 PanelConfig");
             }
         }
 
-        public virtual async UniTask<IUIPanelBase> OnOpen(IOpenUIParam openUIParams)
+        protected abstract void OnAwake();
+
+        public virtual async UniTask<IUIPanelBase> Open(IOpenUIParam openUIParams)
         {
             return this;
         }
 
-        public abstract void OnClose();
+        public virtual async void Close()
+        {
+
+        }
     }
 
     public abstract class IUIPanel<Tparam> : IUIPanelBase where Tparam : IOpenUIParam
     {
-        public sealed override async UniTask<IUIPanelBase> OnOpen(IOpenUIParam openUIParams)
+        public sealed override PanelConfig panelConfig => GetComponent<PanelConfig>();
+
+        public sealed override async UniTask<IUIPanelBase> Open(IOpenUIParam openUIParams)
         {
             if (openUIParams == null)
             {
@@ -72,5 +85,24 @@ namespace Duskvern
         }
 
         protected abstract IUIPanelBase OnOpen(Tparam openUIParams);
+
+        public sealed override async void Close()
+        {
+            uITransitionAnimator = GetComponent<UITransitionAnimator>();
+            if (uITransitionAnimator != null)
+            {
+                await uITransitionAnimator.CloseUI(CloseUI);
+                return;
+            }
+
+            CloseUI();
+
+            void CloseUI()
+            {
+                Close();
+            }
+        }
+
+        protected abstract void OnClose();
     }
 }

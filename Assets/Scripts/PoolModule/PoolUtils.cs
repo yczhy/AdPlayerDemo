@@ -118,24 +118,24 @@ namespace Duskvern
             return poolModule.Spawn(_prefab, localPosition, localRotation, localScale, parent, worldPositionStays);
         }
 
-        public static void Push(GameObject _obj, float _delay = 0f)
+        public static void DeSpawn(GameObject _obj, float _delay = 0f)
         {
             if (!CheckInit())
             {
                 return;
             }
 
-            poolModule.Push(_obj, _delay);
+            poolModule.DeSpawn(_obj, _delay);
         }
 
-        public static bool TryPush(GameObject _obj, float _delay = 0f)
+        public static bool TryDeSpawn(GameObject _obj, float _delay = 0f)
         {
             if (!CheckInit())
             {
                 return false;
             }
 
-            return poolModule.TryPush(_obj, _delay);
+            return poolModule.TryDeSpawn(_obj, _delay);
         }
 
         public static void AddPool(GameObject _prefab)

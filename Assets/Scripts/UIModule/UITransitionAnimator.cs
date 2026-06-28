@@ -19,7 +19,17 @@ namespace Duskvern
             openAction.Invoke();
         }
 
+        public async UniTask CloseUI(Action _closeAction)
+        {
+            var closeAction = _closeAction;
+            if (closeAction == null)
+            {
+                Logger.LogUI("closeAction is null");
+                return;
+            }
 
+            closeAction.Invoke();
+        }
     }
 }
 

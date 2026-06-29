@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Duskvern
 {
-    public class UIModule : MonoBehaviour
+    public class UIModule : SingletonMono<UIModule>
     {
         // 已经打开的 面板
         private readonly List<IUIPanelBase> openPanels = new List<IUIPanelBase>();
@@ -20,12 +20,14 @@ namespace Duskvern
 
         private const string UIPrefabPath = "Prefabs/UIPanel/";
 
-        private void Awake()
+        public override void Init()
         {
+            base.Init();
             if (uiRoot == null)
             {
                 var obj = new GameObject("UIRoot");
                 uiRoot = obj.transform;
+                obj.transform.SetParent(transform);
             }
 
             for (int i = 0; i < Enum.GetValues(typeof(UIPanelLayer)).Length; i++)
@@ -103,6 +105,17 @@ namespace Duskvern
             return beOpenPanel;
         }
 
+        public async UniTask ClosePanel(UIPanelType uIPanelType, bool isAll = false)
+        {
+            IUIPanelBase panel = null;
+            for (int i = openPanels.Count - 1; i >= 0; i--)
+            {
+                panel = openPanels[i];
+                if (panel == null) return;
+                await ClosePanel(panel);
+                if (!isAll) break;
+            }
+        }
 
         public async UniTask ClosePanel(IUIPanelBase panel)
         {

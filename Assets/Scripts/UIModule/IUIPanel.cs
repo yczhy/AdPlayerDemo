@@ -95,11 +95,11 @@ namespace Duskvern
                 return;
             }
 
-            CloseUI();
+            OnClose();
 
             void CloseUI()
             {
-                Close();
+                OnClose();
             }
         }
 

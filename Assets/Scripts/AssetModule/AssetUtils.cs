@@ -13,7 +13,7 @@ namespace Duskvern
         /// <summary>
         /// 初始化资源模块（必须在游戏启动时调用一次）
         /// </summary>
-        public static void Initialize(AssetLoadType loadType = AssetLoadType.Resources)
+        public static void Init(AssetLoadType loadType = AssetLoadType.Resources)
         {
             _assetModule = new AssetModule().Init(loadType);
         }
@@ -146,7 +146,7 @@ namespace Duskvern
         #region 便捷方法
         
         /// <summary>
-        /// 加载 Sprite（Resources 专用）
+        /// 加载 Sprite
         /// </summary>
         public static Sprite LoadSprite(string assetPath)
         {

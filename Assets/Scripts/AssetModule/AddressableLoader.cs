@@ -15,7 +15,7 @@ namespace Duskvern
         
         // 记录已加载的资源句柄，用于卸载
         private readonly Dictionary<string, AsyncOperationHandle> _loadedHandles = new();
-        private readonly Dictionary<UnityEngine.Object, string> _assetToKey = new();
+        private readonly Dictionary<UnityEngine.Object, string> _assetToKey = new(); 
 
         public IAssetLoader Init(AssetModule assetModule)
         {

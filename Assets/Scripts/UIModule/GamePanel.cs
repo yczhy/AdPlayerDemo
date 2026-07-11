@@ -25,17 +25,17 @@ public class GamePanel : IUIPanel<GameOpenParams>
     }
 }
 
-public sealed class GameOpenParams : IOpenUIParam, IPoolable
+public sealed class GameOpenParams : IOpenUIParam
 {
     public int TabIndex;
     public string GoodsId;
 
-    public void OnDeSpawn()
+    public override void OnDeSpawn()
     {
         
     }
 
-    public void OnSpawn()
+    public override void OnSpawn()
     {
         
     }

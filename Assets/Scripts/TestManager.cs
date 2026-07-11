@@ -12,7 +12,7 @@ public class TestManager : MonoBehaviour
     {
         // rewardBtn.onClick.AddListener(OnClickRewardAd);
         // InterstitialBtn.onClick.AddListener(OnClickInterstitialAd);
-        AssetUtils.Initialize(AssetLoadType.Addressable);
+        AssetUtils.Init(AssetLoadType.Addressable);
         PoolUtil.Init();
     }
 

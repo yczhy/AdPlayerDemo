@@ -8,9 +8,11 @@ namespace Duskvern
 
     }
 
-    public abstract class IOpenUIParam
+    public abstract class IOpenUIParam : IPoolable
     {
+        public abstract void OnDeSpawn();
 
+        public abstract void OnSpawn();
     }
 
     [RequireComponent(typeof(PanelConfig))]
@@ -51,22 +53,25 @@ namespace Duskvern
         }
     }
 
-    public abstract class IUIPanel<Tparam> : IUIPanelBase where Tparam : IOpenUIParam
+    public abstract class IUIPanel<Tparam> : IUIPanelBase where Tparam : IOpenUIParam, new()
     {
         public sealed override PanelConfig panelConfig => GetComponent<PanelConfig>();
+        protected IOpenUIParam openUIParam; 
 
-        public sealed override async UniTask<IUIPanelBase> Open(IOpenUIParam openUIParams)
+        public sealed override async UniTask<IUIPanelBase> Open(IOpenUIParam openUIParam)
         {
-            if (openUIParams == null)
+            if (openUIParam == null)
             {
                 Logger.LogUI($"UIPanel {typeof(IUIPanel<Tparam>).Name} open with null param");
                 return this;
             }
-            if (openUIParams is not Tparam param)
+            if (openUIParam is not Tparam param)
             {
-                Logger.LogUI($"UIPanel {typeof(IUIPanel<Tparam>).Name} open with wrong param type {openUIParams.GetType().Name}");
+                Logger.LogUI($"UIPanel {typeof(IUIPanel<Tparam>).Name} open with wrong param type {openUIParam.GetType().Name}");
                 return this;
             }
+
+            this.openUIParam = openUIParam;
 
             uITransitionAnimator = GetComponent<UITransitionAnimator>();
             if (uITransitionAnimator != null)
@@ -99,7 +104,17 @@ namespace Duskvern
 
             void CloseUI()
             {
+                ReleaseParam();
                 OnClose();
+            } 
+        }
+
+        protected void ReleaseParam()
+        {
+            if (openUIParam is Tparam param)
+            {
+                ClassPool<Tparam>.Push(param);
+                openUIParam = null;
             }
         }
 

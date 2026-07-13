@@ -13,7 +13,15 @@ namespace Duskvern
 
     public class GamePanelParams : IOpenUIParam
     {
-        
+        public override void OnDeSpawn()
+        {
+            
+        }
+
+        public override void OnSpawn()
+        {
+            
+        }
     }
 
     [Serializable]

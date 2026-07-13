@@ -26,16 +26,17 @@ namespace Duskvern
             LoadSaveData();
         }
 
-        // private float time = 0;
-        // private float timer = 3f;
+        private static float time = 0;
         public static void OnUpdate(float deltaTime) // 暂时这里的代码先留着
         {
-            // time += deltaTime;
-            // if (time > timer)
-            // {
-            //     time = 0;
-            //     SaveData();
-            // }
+            if (!saveDataConfig.isAutoSave || saveDataConfig.autoSaveInterval <= 0) return;
+
+            time += deltaTime;
+            if (time > saveDataConfig.autoSaveInterval)
+            {
+                time = 0;
+                SaveData();
+            }
         }
 
         #endregion
@@ -62,7 +63,7 @@ namespace Duskvern
             }
         }
 
-        private static ISaveData LoadData<T>(Type dataType, string key, T defaultInstance)
+        private static ISaveData LoadData<T>(Type dataType, string key, T defaultInstance) where T : ISaveData
         {
             var method = saveDataConfig.GetType().GetMethod("Load").MakeGenericMethod(dataType);
             return (ISaveData)method.Invoke(saveDataConfig, new object[] { key, defaultInstance });
@@ -126,6 +127,12 @@ namespace Duskvern
         {
             Logger.Log("SaveDataModule", $"清除 {key} 的存档");
             saveDataConfig.Delete(key);
+        }
+
+        public static void ClearSaveData<T>() where T : ISaveData
+        {
+            string key = GetSaveKey(typeof(T));
+            ClearSaveData(key);
         }
 
         [Button("清除所有存档")]

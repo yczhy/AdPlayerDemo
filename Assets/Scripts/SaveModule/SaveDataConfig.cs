@@ -24,6 +24,9 @@ namespace Duskvern
         [Header("存档类型")]
         public E_SaveType e_SaveType;
 
+        public bool isAutoSave = true;
+        public float autoSaveInterval = 180f;
+
         public override void Init()
         {
             SaveGame.Encode = isEncrypt;

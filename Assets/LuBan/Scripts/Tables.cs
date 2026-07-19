@@ -14,17 +14,17 @@ namespace cfg
 {
 public partial class Tables
 {
-    public TbGridTile TbGridTile {get; }
+    public TbCardElements TbCardElements {get; }
 
     public Tables(System.Func<string, JSONNode> loader)
     {
-        TbGridTile = new TbGridTile(loader("tbgridtile"));
+        TbCardElements = new TbCardElements(loader("tbcardelements"));
         ResolveRef();
     }
     
     private void ResolveRef()
     {
-        TbGridTile.ResolveRef(this);
+        TbCardElements.ResolveRef(this);
     }
 }
 

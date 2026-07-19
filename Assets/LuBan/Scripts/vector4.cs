@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 using Luban;
-using Luban.SimpleJSON;
+using SimpleJSON;
 
 
 namespace cfg

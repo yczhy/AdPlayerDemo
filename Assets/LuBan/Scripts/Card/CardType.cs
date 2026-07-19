@@ -9,26 +9,18 @@
 
 
 
-namespace cfg
+namespace cfg.Card
 { 
-    public enum GridTileType
+    public enum CardType
     {
         /// <summary>
-        /// 红
+        /// 正常手牌，没有特殊功能
         /// </summary>
-        RED = 1,
+        NORMAL = 1,
         /// <summary>
-        /// 绿
+        /// 会产生特殊功能
         /// </summary>
-        GREEN = 2,
-        /// <summary>
-        /// 蓝
-        /// </summary>
-        BLUE = 3,
-        /// <summary>
-        /// 白
-        /// </summary>
-        WHITE = 4,
+        SPECIAL = 2,
     }
 
 } 
